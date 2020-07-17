@@ -1,0 +1,6 @@
+2020-07-17 22:27:01,116:__main__:Time spent import data from TMP_POOM2 : 0:00:06.955208
+2020-07-17 22:27:01,251:__main__:Time spent preprocess data: 0:00:00.134720
+2020-07-17 22:27:05,301:__main__:Time spent on RandomForestClassifier making prediction: 0:00:04.049298
+2020-07-17 22:27:06,237:__main__:Time spent add feature importances: 0:00:00.934020
+2020-07-17 22:27:08,936:__main__:Time spent export to TMP_POOM1: 0:00:02.698585
+2020-07-17 22:27:08,936:__main__:Total time: 0:00:14.775838 spent on data shape of (5000, 51)

@@ -4,15 +4,27 @@ import pandas as pd
 import numpy as np
 from joblib import  load
 from datetime import datetime
+import logging
 
+# init Logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
+file_handler = logging.FileHandler('logmain.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+# set start time                  
 startTime = datetime.now()
 
+importtable = 'TMP_POOM2'
 df = jdbapi.read_jdbc("""
 SELECT 
     *
-FROM TMP_POOM2
-LIMIT 5000
-""")
+FROM 
+    {}
+LIMIT 
+    5000
+""".format(importtable))
 
 # df = jdbapi.read_jdbc("""
 # SELECT 
@@ -80,11 +92,12 @@ LIMIT 5000
 #      --AND
 #           --KEY_DATE = TO_CHAR(current_timestamp,'YYYYMMDD')
 
-# LIMIT 5
+# LIMIT 500
 # """)
 
-print('Time spent import data: ',datetime.now() - startTime)
-print('Total time:',datetime.now() - startTime)
+# Log
+logger.info('Time spent import data from {} : {}'.format(importtable,datetime.now() - startTime))
+dfshape = df.shape
 importTime = datetime.now()
 
 # Clean dataset
@@ -100,8 +113,8 @@ df_processed = np.concatenate((df_processed.todense(),np.array(df[preprocessing.
 features_final = np.concatenate((preprocessing.num_feature,process_pipeline.transformer_list[1][1]['Onhot'].get_feature_names(preprocessing.categorical_feature)),axis = 0)
 features_final = np.concatenate((features_final,preprocessing.no_preprocess_feature))
 
-print('Time spent preprocess data: ',datetime.now() - importTime)
-print('Total time:',datetime.now() - startTime)
+# Log
+logger.info('Time spent preprocess data: {}'.format(datetime.now() - importTime))
 preprocessTime = datetime.now()
 
 # Prediction
@@ -111,8 +124,8 @@ model = load('model/rnd_base.joblib')
 #churn7_30 = model.predict(df_processed)
 proba_7,proba_30 = model.predict_proba(df_processed)
 
-print('Time spent on model making prediction: ',datetime.now() - preprocessTime)
-print('Total time:',datetime.now() - startTime)
+# Log
+logger.info('Time spent on {} making prediction: {}'.format(type(model).__name__,datetime.now() - preprocessTime))
 modelTime = datetime.now()
 
 # Get Feature importance by level
@@ -141,17 +154,16 @@ prediction['KEY_DATE'] = datetime.today().strftime('%Y%m%d')
 # prediction.set_index(keep_index,inplace = True)
 prediction['SUBS_KEY'] = keep_index
 
-print('Time spent add feature importances: ',datetime.now() - modelTime)
-print('Total time:',datetime.now() - startTime)
+# Log
+logger.info('Time spent add feature importances: {}'.format(datetime.now() - modelTime))
 featureTime = datetime.now()
 
 # to Netezza
 dest_table = 'TMP_POOM1'
 jdbapi.insertBulk(dest_table,prediction)
 
-
-print('Time spent export to Netezza: ',datetime.now() - featureTime)
-print('Total time:',datetime.now() - startTime)
-print('Successfully export to {}'.format(dest_table))
+# Log
+logger.info('Time spent export to {}: {}'.format(dest_table,datetime.now() - featureTime))
+logger.info('Total time: {} spent on data shape of {}'.format(datetime.now() - startTime, dfshape))
 # prediction.to_csv('data/prediction.csv')
 # print('Successfully prediction to csv')
