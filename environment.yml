@@ -1,0 +1,27 @@
+name: churn_prediction_env
+channels:
+- conda
+- conda-forge
+- defaults
+dependencies:
+# tools
+- python=3.6.5
+- pip=20.1.1
+# ML
+# - tensorflow
+- scikit-learn=0.23.1
+# - keras
+# - opencv
+# data analysis
+- pandas=1.0.5
+- numpy=1.18.5
+#format
+- pylint
+- autopep8
+# connect databases
+- pyodbc=4.0.30
+- xlsxwriter=1.2.9
+- jpype1=0.6.3
+- jaydebeapi=1.1.1
+- joblib=0.15.1
+- jpype1=0.6.3
