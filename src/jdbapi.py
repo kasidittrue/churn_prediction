@@ -29,28 +29,29 @@ def read_jdbc(sql_statement, database = "TELCOANAPRD"):
         return pd.DataFrame(curs.fetchall(), columns=columns) 
     except jdbc.DatabaseError as de:
         raise
-    finally:
-        curs.close()
-        conn.close()
+    # finally:
+    #     curs.close()
+    #     conn.close()
 
 
 
-def query(sql):
+def query(sql,chunksize = None): # edit chunk size here
     '''
-    Description: query from Netezza
-    Input: sql statement
-    Implementation : query('sql statement')
+    Description: query from Netezza and put chunksize in if work as a iterator
+    Input: sql statement and chunk size if any
+    Implementation : query('sql statement', 500)
     '''
     os.environ['JAVA_HOME']='C:\\Program Files\\Java\\jdk1.8.0_251\\bin'#path java jdk
     try:
         conn = jdbc.connect('org.netezza.Driver','jdbc:netezza://10.50.78.21:5480/TELCOANAPRD',['Kasidi3', '12345678'],'C:\\JDBC\\nzjdbc.jar',)#path file jdbc 
         cursor = conn.cursor()
-        return pd.read_sql(sql, conn)
+        return pd.read_sql(sql, conn,chunksize = chunksize)
     except jdbc.DatabaseError as de:
         raise
-    finally:
-        cursor.close()
-        conn.close()
+    # finally:
+    #     cursor.close()
+    #     conn.close()
+
 def execute(sql):
     '''
     Description: execute
@@ -88,7 +89,7 @@ def insertBulk(table, df): #insert from data frame pandas
         cursor.executemany(sql, values)
     except jdbc.DatabaseError as de:
         raise
-    finally:
-        cursor.close()
-        conn.close()
+    # finally:
+    #     cursor.close()
+    #     conn.close()
     
