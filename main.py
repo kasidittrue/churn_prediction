@@ -169,7 +169,7 @@ for df in df_generator:
     featureTime = datetime.now()
 
     # to Netezza
-    export_table = 'TMP_POOM1'
+    export_table = 'TMP_PRD_PREPAID_PROFILE_PREDICTION'
     jdbapi.insertBulk(export_table,prediction)
 
     # Log
